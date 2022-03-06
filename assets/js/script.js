@@ -12,15 +12,19 @@ function capitalizeFirstLetter(string){
 
 // function to get the current day's forecast
 var getcurrentDayForecast = function(cityForecast){
-    //display the forecast to the user
-    $("#chosen-city").text(cityForecast.city.name + " " + moment.unix(cityForecast.list[0].dt).format("M-DD-YYYY"));
+    //display the city and date to the user
+    $("#chosen-city").text(cityForecast.city.name + " - " + moment.unix(cityForecast.list[0].dt).format("ddd, M/DD/YY"));
 
+    // create a variable to hold the id of the icon the current day's weather and set it to a url and to the image element
     var weatherIcon = cityForecast.list[0].weather[0].icon;
-    console.log(weatherIcon);
     var iconUrl = "http://openweathermap.org/img/wn/" + weatherIcon + "@2x.png";
-    console.log(iconUrl);
     $("#weather-icon").attr("src", iconUrl);
 
+    //set the decsription, temperature, sunrise and sunset of the current day's weather
+    $("#city-desc").text(cityForecast.list[0].weather[0].description);
+    $("#city-temp").text("Temp: " + Math.round(cityForecast.list[0].temp.day) + " degrees");
+    $("#city-sunrise").text("Sunrise: " + moment.unix(cityForecast.list[0].sunrise).format("hh:mm a"));
+    $("#city-sunset").text("Sunset: " + moment.unix(cityForecast.list[0].sunset).format("hh:mm a"));
 
 };
 
