@@ -1,0 +1,59 @@
+.hero {
+    color: #ffffff;
+    text-align: center;
+    background-image: linear-gradient(to bottom right, #0583F2, #f2e30f);
+}
+
+#chosen-city {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+
+.currDayInfo{
+    color: #ffffff;
+    background-image: linear-gradient(#5B9BDE, #5B54EB);
+}
+
+#wicon{
+    margin-top: 10px;
+    margin-left: 20px; 
+    margin-bottom: 15px;
+}
+
+#city-desc{
+    margin-top: 10px;
+    margin-left: 20px; 
+    font-size: 20px;
+}
+
+#city-temp{
+    margin-top: 10px;
+    margin-left: 20px; 
+    font-size: 20px;
+}
+
+#city-sunrise{
+    margin-top: 10px;
+    margin-left: 20px; 
+    font-size: 20px;
+}
+
+#city-sunset{
+    margin-top: 10px;
+    margin-left: 20px; 
+    font-size: 20px;
+}
+
+#forecast{
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0583F2;
+    margin: 10px 0;
+}
+
+.city-btn{
+    color: #ffffff;
+    text-align: center;
+}

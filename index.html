@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./assets/images/sun-icon.png"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/style.css"/>
+    <title>Weather Forecast</title>
+</head>
+<body>
+    <!-- create a header for the page -->
+    <header class="hero">
+        <h1>Find Your Weather Dashboard</h1>
+    </header>
+
+    <!-- create a container to hold the elements -->
+    <div class="container">
+        <!-- create a div with flex properties to hold the elements -->
+        <div class="row mt-4 d-flex justify-content-between">
+            <!-- create a div to hold the search elements -->
+            <div class="col-3">
+                <h4>Search for a City:</h4>
+                <input type="text" class="form-label col-12" placeholder="Enter a city" for="cityTextInput" id="cityTextArea"></input>
+                <button type="button" class="btn btn-success mt-3 col-12" id="searchBtn">Search</button>
+                <div class="city-collection d-block mt-4 border-top border-secondary border-3">
+                    <ul class="list-group city-list p-2"></ul>
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="border border-secondary currDayInfo">
+                    <p id="chosen-city">Forecasted City</p>
+                    <div id="wicon"><img id="weather-icon" src="" alt="weather icon"></div>
+                    <p id="city-desc">Weather Description</p>
+                    <p id="city-temp">Temperature</p>
+                    <p id="city-sunrise">Sunrise</p>
+                    <p id="city-sunset">Sunset</p>
+                </div>
+                <div class="forcast-info">
+                    <p id="forecast">5 Day Forecast:</p>
+                    <div class="row d-flex justify-content-around card-holder"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-ui-touch-punch@0.2.3/jquery.ui.touch-punch.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.15.0/umd/popper.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="./assets/js/script.js"></script>
+</body>
+</html>
