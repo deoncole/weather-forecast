@@ -10,6 +10,60 @@ function capitalizeFirstLetter(string){
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
+// function to check if a 5 day forecast is already displaying. If so empty the div and call the function to display the new forecast
+var cityForecastCheck = function(forecast){
+    if ($(".card-holder").children().length > 0){
+        $(".card-holder").empty();
+        getFutureForecast(forecast);
+    } else {
+        getFutureForecast(forecast);
+    }
+
+}
+
+// function to get the 5 day forecast
+var getFutureForecast = function(upcomingWeather){
+    console.log(upcomingWeather);
+
+    // loop through the passed array parameter and create elements for the card to display the 5 day forecast
+    for (var i = 0; i<upcomingWeather.length; i++){
+
+        // create divs to hold the elements
+        var cardEl = document.createElement("div");
+        var cardContentEl = document.createElement("div");
+        var imageContentEl = document.createElement("div");
+        var weatherContentEl = document.createElement("div");
+        var tempEl = document.createElement("div");
+        var sunriseEl = document.createElement("div");
+        var sunsetEl = document.createElement("div");
+        // set the class name and attributes for the card
+        cardEl.className="card";
+        cardEl.setAttribute('style', 'width: 10rem; background-color:#E5E4E2;');
+        imageContentEl.setAttribute('style', "margin:0 auto;");
+        cardContentEl.className="card-body";
+    
+        // set the innerHTML for the card with the 5 day forecast info from the array
+        cardContentEl.innerHTML = '<h5 class=card-title card-date>' + moment.unix(upcomingWeather[i].dt).format("M/DD/YY") + '</h5>'
+        imageContentEl.innerHTML = '<img src=http://openweathermap.org/img/wn/' + upcomingWeather[i].weather[0].icon + '@2x.png alt=weather icon</img>';
+        weatherContentEl.innerHTML = '<p class=card-text>'+upcomingWeather[i].weather[0].description+'</p>';
+        tempEl.innerHTML = '<p class=card-text>Temp: '+Math.round(upcomingWeather[i].temp.day)+'</p>';
+        sunriseEl.innerHTML = '<p class=card-text>Sunrise: '+moment.unix(upcomingWeather[i].sunrise).format("hh:mm a")+'</p>';
+        sunsetEl.innerHTML = '<p class=card-text>Sunset: '+moment.unix(upcomingWeather[i].sunset).format("hh:mm a")+'</p>';
+    
+        // append all of the elements
+        cardEl.append(cardContentEl);
+        cardEl.append(imageContentEl);
+        cardEl.append(weatherContentEl);
+        cardEl.append(tempEl);
+        cardEl.append(sunriseEl);
+        cardEl.append(sunsetEl);
+        
+        // append the card to the main element
+        $(".card-holder").append(cardEl);
+    }
+
+};
+
 // function to get the current day's forecast
 var getcurrentDayForecast = function(cityForecast){
     //display the city and date to the user
@@ -28,10 +82,22 @@ var getcurrentDayForecast = function(cityForecast){
 
 };
 
+//  function to display the 5 day forecast from the API data 
 var displayForecast = function(cityForecast){
+    // set an array to hold the upcoming 5 day forecast
+    var upcomingWeather = [];
 
+    // loop through the data and push into the array
+    for(var i=0; i<cityForecast.list.length; i++){
+        upcomingWeather.push(cityForecast.list[i]);
+    }
+    // remove the current day forecast from the array
+    upcomingWeather.splice(0, 1);
+    // call the function to check if a 5 day forecast is currently displayed
+    cityForecastCheck(upcomingWeather);
 }
 
+// function to get the fetch the data from the weather api
 var getForecast = function (city){
     // variable to hold the api for the request
     var apiURL = "https://api.openweathermap.org/data/2.5/forecast/daily?q=" + city + "&cnt=6&units=imperial&appid=006aa30064ca02ee02bd1cc6373cf4f3";
@@ -40,9 +106,10 @@ var getForecast = function (city){
     fetch(apiURL).then(function(response){
         if(response.ok){
             response.json().then(function(data){
-                console.log(data);
+                // call the function to display the current day forecast
                 getcurrentDayForecast(data);
-                // displayForecast(data);
+                // call the function to display the five day forecast
+                displayForecast(data);
             })
         } else {
             // alert the user to enter a vaild city name
@@ -55,6 +122,7 @@ var getForecast = function (city){
     });
 };
 
+// click function when the search button is clicked
 searchBtnEl.click(function(){
     // variable to hold the name of the inputted city
     cityName = $("#cityTextArea").val()
