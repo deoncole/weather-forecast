@@ -8,6 +8,10 @@ var cityStorage = [];
 // boolean to check if the city has been chosen or not
 var selectedCity = false;
 
+// variables to hold the longitude and latitude
+var latitude = "";
+var longitude = "";
+
 // if there is content in local storage create the buttons to see the saved cities
 $(document).ready(function(){
     // check if the local storage is null or not when loading the page
@@ -76,8 +80,8 @@ var getFutureForecast = function(upcomingWeather){
         var imageContentEl = document.createElement("div");
         var weatherContentEl = document.createElement("div");
         var tempEl = document.createElement("div");
-        var sunriseEl = document.createElement("div");
-        var sunsetEl = document.createElement("div");
+        var windSpeedEl = document.createElement("div");
+        var humidityEl = document.createElement("div");
         // set the class name and attributes for the card
         cardEl.className="card";
         cardEl.setAttribute('style', 'width: 10rem; background-color:#798699;');
@@ -89,16 +93,16 @@ var getFutureForecast = function(upcomingWeather){
         imageContentEl.innerHTML = '<img src=http://openweathermap.org/img/wn/' + upcomingWeather[i].weather[0].icon + '@2x.png alt=weather icon</img>';
         weatherContentEl.innerHTML = '<p class=card-text>'+upcomingWeather[i].weather[0].description+'</p>';
         tempEl.innerHTML = '<p class=card-text>Temp: '+Math.round(upcomingWeather[i].temp.day)+'</p>';
-        sunriseEl.innerHTML = '<p class=card-text>Wind Speed: '+upcomingWeather[i].speed+'mph</p>';
-        sunsetEl.innerHTML = '<p class=card-text>Humidity: '+upcomingWeather[i].humidity+' %</p>';
+        windSpeedEl.innerHTML = '<p class=card-text>Wind Speed: '+upcomingWeather[i].speed+'mph</p>';
+        humidityEl.innerHTML = '<p class=card-text>Humidity: '+upcomingWeather[i].humidity+' %</p>';
     
         // append all of the elements
         cardEl.append(cardContentEl);
         cardEl.append(imageContentEl);
         cardEl.append(weatherContentEl);
         cardEl.append(tempEl);
-        cardEl.append(sunriseEl);
-        cardEl.append(sunsetEl);
+        cardEl.append(windSpeedEl);
+        cardEl.append(humidityEl);
         
         // append the card to the main element
         $(".card-holder").append(cardEl);
@@ -106,8 +110,54 @@ var getFutureForecast = function(upcomingWeather){
 
 };
 
+// function to get the daily maximum UV index
+var getUvIndex = function(lat, lon){
+    // variable to hold the api for the request
+    var apiURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&cnt=6&units=imperial&exclude=hourly&appid=006aa30064ca02ee02bd1cc6373cf4f3";
+    var uvIndex = "";
+    // fetch the api to get the UV index
+    fetch(apiURL).then(function(response){
+        if(response.ok){
+            response.json().then(function(data){
+                // get the value of the uv index
+                uvIndex = data.daily[0].uvi;
+                // set the text value of the element
+                $("#city-uv").text(uvIndex);
+                //conditional to check the value and set the correct background color
+                if(parseFloat(uvIndex) >=0.00 && parseFloat(uvIndex)<=2.00){
+                    $("#city-uv").css("background-color", "green");
+                    $("#city-uv").css("color", "#ffffff");
+                } else if(parseFloat(uvIndex) >=2.00 && parseFloat(uvIndex)<=5.00){
+                    $("#city-uv").css("background-color", "yellow");
+                    $("#city-uv").css("color", "#000000");
+                } else {
+                    $("#city-uv").css("background-color", "orange");
+                    $("#city-uv").css("color", "#000000");
+                }
+            })
+        } else {
+            // alert the user to enter a vaild city name
+            alert("Please enter a vaild city name.")
+            return;
+        }
+    })
+    // incase of netowrk error alert the user
+    .catch(function(error){
+        alert("Unable to connect to weather app.");
+    });
+
+}
+
 // function to get the current day's forecast
 var getCurrentDayForecast = function(cityForecast){
+    // get the latitude and longitude of the chosen city
+    latitude = cityForecast.city.coord.lat;
+    longitude = cityForecast.city.coord.lon;
+
+    // call the function to get the uv index
+    getUvIndex(latitude, longitude);
+
+    
     //display the city and date to the user
     $("#chosen-city").text(cityForecast.city.name + " - " + moment.unix(cityForecast.list[0].dt).format("ddd, M/DD/YY"));
 
@@ -119,8 +169,8 @@ var getCurrentDayForecast = function(cityForecast){
     //set the decsription, temperature, sunrise and sunset of the current day's weather
     $("#city-desc").text(cityForecast.list[0].weather[0].description);
     $("#city-temp").text("Temp: " + Math.round(cityForecast.list[0].temp.day) + " degrees");
-    $("#city-sunrise").text("Wind Speed: " + cityForecast.list[0].speed + " mph");
-    $("#city-sunset").text("Humidity: " + cityForecast.list[0].humidity + " %");
+    $("#city-speed").text("Wind Speed: " + cityForecast.list[0].speed + " mph");
+    $("#city-humidity").text("Humidity: " + cityForecast.list[0].humidity + " %");
 
 };
 
@@ -150,9 +200,6 @@ var getForecast = function (city, selectedCity){
             response.json().then(function(data){
 
                 if (selectedCity){
-                    //call the function to check local storage
-                    // checkLocalStorage(cityName)
-                
                     // call the function to display the current day forecast
                     getCurrentDayForecast(data);
                     // call the function to display the five day forecast
