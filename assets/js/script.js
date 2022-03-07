@@ -238,6 +238,18 @@ searchBtnEl.click(function(){
     cityName = $("#cityTextArea").val()
     // format the city to be capitalizec
     cityName = capitalizeFirstLetter(cityName);
+
+    // check to make sure user hasn't entered the same city. If so alert them and stop the function
+    if (cityStorage){
+        for(var i=0; i<cityStorage.length; i++){
+            if(cityName.toLowerCase() === cityStorage[i].toLowerCase()){
+                alert(cityName + " is already in the search list.");
+                // set the main title to the name of the inputted city
+                $("#cityTextArea").val("");
+                return;
+            }
+        }
+    }
    
     // conditional to check if the input box is empty or not
     if (cityName === ""){
