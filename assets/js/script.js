@@ -5,6 +5,36 @@ var cityName = "";
 // create a empty array to be used for local storage
 var cityStorage = [];
 
+// boolean to check if the city has been chosen or not
+var selectedCity = false;
+
+// if there is content in local storage create the buttons to see the saved cities
+$(document).ready(function(){
+    // check if the local storage is null or not when loading the page
+    if(localStorage.getItem("cityList") != null){
+
+        // get items from local storage and set them to the array
+        var savedCities = localStorage.getItem("cityList");
+        cityStorage = JSON.parse(savedCities);
+    
+        // loop through the stored array and create the buttons for the cities
+        for(var i =0; i<cityStorage.length; i++){
+            $(".city-list").append('<button type="button" class="city-btn bg-info list-group-item list-group-item-action mt-2">' + cityStorage[i] + '</button>');
+        }
+    } else {
+        return;
+    }
+
+});
+
+// function to handle the click event on the city's that are saved
+$(".city-list").click(function(event){
+    // get the text of the selected button
+    var chosenCity = event.target.textContent;
+    // call the function to show the forecast of the selected city
+    getForecast(chosenCity, true);
+});
+
 // function to capitalize the first letter of a string to be use when grabbing a inputted city
 function capitalizeFirstLetter(string){
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -21,9 +51,21 @@ var cityForecastCheck = function(forecast){
 
 }
 
+// function to check if local storage is empty or not
+var checkLocalStorage = function(cityName){
+    if (localStorage.getItem("cityList")===null){
+        cityStorage.push(cityName)
+        localStorage.setItem("cityList", JSON.stringify(cityStorage));
+    } else if (localStorage.getItem("cityList") != null){
+        var cityList = localStorage.getItem("cityList");
+        cityStorage = JSON.parse(cityList);
+        cityStorage.push(cityName);
+        localStorage.setItem("cityList", JSON.stringify(cityStorage));
+    }
+};
+
 // function to get the 5 day forecast
 var getFutureForecast = function(upcomingWeather){
-    console.log(upcomingWeather);
 
     // loop through the passed array parameter and create elements for the card to display the 5 day forecast
     for (var i = 0; i<upcomingWeather.length; i++){
@@ -38,7 +80,7 @@ var getFutureForecast = function(upcomingWeather){
         var sunsetEl = document.createElement("div");
         // set the class name and attributes for the card
         cardEl.className="card";
-        cardEl.setAttribute('style', 'width: 10rem; background-color:#E5E4E2;');
+        cardEl.setAttribute('style', 'width: 10rem; background-color:#798699;');
         imageContentEl.setAttribute('style', "margin:0 auto;");
         cardContentEl.className="card-body";
     
@@ -98,7 +140,7 @@ var displayForecast = function(cityForecast){
 }
 
 // function to get the fetch the data from the weather api
-var getForecast = function (city){
+var getForecast = function (city, selectedCity){
     // variable to hold the api for the request
     var apiURL = "https://api.openweathermap.org/data/2.5/forecast/daily?q=" + city + "&cnt=6&units=imperial&appid=006aa30064ca02ee02bd1cc6373cf4f3";
 
@@ -106,14 +148,35 @@ var getForecast = function (city){
     fetch(apiURL).then(function(response){
         if(response.ok){
             response.json().then(function(data){
-                // call the function to display the current day forecast
-                getcurrentDayForecast(data);
-                // call the function to display the five day forecast
-                displayForecast(data);
+
+                if (selectedCity){
+                    //call the function to check local storage
+                    // checkLocalStorage(cityName)
+                
+                    // call the function to display the current day forecast
+                    getcurrentDayForecast(data);
+                    // call the function to display the five day forecast
+                    displayForecast(data);
+
+                    selectedCity = false;
+                } else {
+
+                    // create a button of the inputted city and append it to the list element
+                    $(".city-list").append('<button type="button" class="city-btn bg-info list-group-item list-group-item-action mt-2">' + cityName + '</button>');
+    
+                    //call the function to check local storage
+                    checkLocalStorage(cityName)
+                    
+                    // call the function to display the current day forecast
+                    getcurrentDayForecast(data);
+                    // call the function to display the five day forecast
+                    displayForecast(data);
+                }
             })
         } else {
             // alert the user to enter a vaild city name
             alert("Please enter a vaild city name.")
+            return;
         }
     })
     // incase of netowrk error alert the user
@@ -132,15 +195,13 @@ searchBtnEl.click(function(){
     // conditional to check if the input box is empty or not
     if (cityName === ""){
         alert("You must enter a city to see a forecast!");
-        
+        return;
     } else{
-        // set the main title to the name of the inputted city
-        // $("#chosen-city").text(cityName);
-
-        // create a button of the inputted city and append it to the list element
-        $(".city-list").append('<button type="button" class="city-btn bg-info list-group-item list-group-item-action mt-2">' + cityName + '</button>');
+        
         //call the function to fetch the API
-        getForecast(cityName)
+        getForecast(cityName, false);
+
+        // set the main title to the name of the inputted city
+        $("#cityTextArea").val("");
     }
 });
-
