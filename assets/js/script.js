@@ -89,8 +89,8 @@ var getFutureForecast = function(upcomingWeather){
         imageContentEl.innerHTML = '<img src=http://openweathermap.org/img/wn/' + upcomingWeather[i].weather[0].icon + '@2x.png alt=weather icon</img>';
         weatherContentEl.innerHTML = '<p class=card-text>'+upcomingWeather[i].weather[0].description+'</p>';
         tempEl.innerHTML = '<p class=card-text>Temp: '+Math.round(upcomingWeather[i].temp.day)+'</p>';
-        sunriseEl.innerHTML = '<p class=card-text>Sunrise: '+moment.unix(upcomingWeather[i].sunrise).format("hh:mm a")+'</p>';
-        sunsetEl.innerHTML = '<p class=card-text>Sunset: '+moment.unix(upcomingWeather[i].sunset).format("hh:mm a")+'</p>';
+        sunriseEl.innerHTML = '<p class=card-text>Wind Speed: '+upcomingWeather[i].speed+'mph</p>';
+        sunsetEl.innerHTML = '<p class=card-text>Humidity: '+upcomingWeather[i].humidity+' %</p>';
     
         // append all of the elements
         cardEl.append(cardContentEl);
@@ -107,7 +107,7 @@ var getFutureForecast = function(upcomingWeather){
 };
 
 // function to get the current day's forecast
-var getcurrentDayForecast = function(cityForecast){
+var getCurrentDayForecast = function(cityForecast){
     //display the city and date to the user
     $("#chosen-city").text(cityForecast.city.name + " - " + moment.unix(cityForecast.list[0].dt).format("ddd, M/DD/YY"));
 
@@ -119,8 +119,8 @@ var getcurrentDayForecast = function(cityForecast){
     //set the decsription, temperature, sunrise and sunset of the current day's weather
     $("#city-desc").text(cityForecast.list[0].weather[0].description);
     $("#city-temp").text("Temp: " + Math.round(cityForecast.list[0].temp.day) + " degrees");
-    $("#city-sunrise").text("Sunrise: " + moment.unix(cityForecast.list[0].sunrise).format("hh:mm a"));
-    $("#city-sunset").text("Sunset: " + moment.unix(cityForecast.list[0].sunset).format("hh:mm a"));
+    $("#city-sunrise").text("Wind Speed: " + cityForecast.list[0].speed + " mph");
+    $("#city-sunset").text("Humidity: " + cityForecast.list[0].humidity + " %");
 
 };
 
@@ -154,7 +154,7 @@ var getForecast = function (city, selectedCity){
                     // checkLocalStorage(cityName)
                 
                     // call the function to display the current day forecast
-                    getcurrentDayForecast(data);
+                    getCurrentDayForecast(data);
                     // call the function to display the five day forecast
                     displayForecast(data);
 
@@ -168,7 +168,7 @@ var getForecast = function (city, selectedCity){
                     checkLocalStorage(cityName)
                     
                     // call the function to display the current day forecast
-                    getcurrentDayForecast(data);
+                    getCurrentDayForecast(data);
                     // call the function to display the five day forecast
                     displayForecast(data);
                 }
